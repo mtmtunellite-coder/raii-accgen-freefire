@@ -540,8 +540,8 @@ def generate_accounts():
     # Validate and convert count
     try:
         count = int(count)
-        if count > 15:
-            count = 15
+        if count > 1000:  # Changed from 15 to 1000
+            count = 1000
         if count < 1:
             count = 1
     except:
@@ -554,18 +554,18 @@ def generate_accounts():
     
     print(f"Starting creation of {count} FULL LOGIN accounts for region {region} with name prefix {name}")
     
-    # Use thread pool with limited workers
-    max_workers = 5  # Reduced for stability
+    # Use thread pool with limited workers - increased for larger batches
+    max_workers = 10  # Increased for better performance with 1000 accounts
     
     # Create accounts with retry mechanism until we get exactly the requested count of FULL LOGIN accounts
     results = []
     attempts = 0
-    max_total_attempts = count * 10
+    max_total_attempts = count * 15  # Increased max attempts for larger batches
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         while len(results) < count and attempts < max_total_attempts:
             needed = count - len(results)
-            current_batch = min(needed, max_workers)
+            current_batch = min(needed, max_workers * 2)  # Larger batch size
             
             futures = []
             for i in range(current_batch):
@@ -583,7 +583,7 @@ def generate_accounts():
                     break
             
             if len(results) < count:
-                time.sleep(2)  # Increased delay for stability
+                time.sleep(1)  # Reduced delay for faster processing
     
     # Return response
     response_data = {
@@ -602,7 +602,7 @@ def home():
     return jsonify({
         "message": "FreeFire Account Generator API - FULL LOGIN ONLY",
         "endpoint": "/gen?name=NAME&count=COUNT&region=REGION",
-        "max_count": 100,
+        "max_count": 1000,  # Changed from 15 to 1000
         "available_regions": list(REGION_LANG.keys()),
         "note": "Complete account creation with ALL steps: register -> token -> major register -> major login -> getlogindata"
     })
