@@ -602,7 +602,7 @@ def home():
     return jsonify({
         "message": "FreeFire Account Generator API - FULL LOGIN ONLY",
         "endpoint": "/gen?name=NAME&count=COUNT&region=REGION",
-        "max_count": 15,
+        "max_count": 100,
         "available_regions": list(REGION_LANG.keys()),
         "note": "Complete account creation with ALL steps: register -> token -> major register -> major login -> getlogindata"
     })
